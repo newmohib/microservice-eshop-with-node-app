@@ -16,4 +16,5 @@ npm i -D @types/express @types/node @types/cors
 
 ### Docker internel connection with db
 
+- docker-compose up -d
 - host: host.docker.internal
