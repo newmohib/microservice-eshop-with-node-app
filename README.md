@@ -18,3 +18,5 @@ npm i -D @types/express @types/node @types/cors
 
 - docker-compose up -d
 - host: host.docker.internal
+- npx prisma init --datasource-provider postgresql
+
