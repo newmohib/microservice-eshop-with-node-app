@@ -24,12 +24,12 @@ kill_process_on_port() {
   fi
 }
 
-# Step 1: Setup and run api-gateway
+# # Step 1: Setup and run api-gateway
 echo "Setting up api-gateway..."
 cd api-gateway
 npm install
 create_env_if_missing
-kill_process_on_port
+# kill_process_on_port
 npm run dev &  # Run in background
 cd ..
 
@@ -38,7 +38,7 @@ echo "Setting up inventory service..."
 cd services/inventory
 npm install
 create_env_if_missing
-kill_process_on_port
+# kill_process_on_port
 npm run migrate:dev
 npm run dev &  # Run in background
 cd ../..
@@ -48,7 +48,7 @@ echo "Setting up product service..."
 cd services/product
 npm install
 create_env_if_missing
-kill_process_on_port
+# kill_process_on_port
 npm run migrate:dev
 npm run dev &  # Run in background
 cd ../..
@@ -58,17 +58,27 @@ echo "Setting up user service..."
 cd services/user
 npm install
 create_env_if_missing
-kill_process_on_port
+# kill_process_on_port
 npm run migrate:dev
 npm run dev &  # Run in background
 cd ../..
 
-# Step 4: Setup and run user service
+# Step 4: Setup and run auth service
 echo "Setting up auth service..."
 cd services/auth
 npm install
 create_env_if_missing
-kill_process_on_port
+# kill_process_on_port
+npm run migrate:dev
+npm run dev &  # Run in background
+cd ../..
+
+# Step 4: Setup and run email service
+echo "Setting up email service..."
+cd services/email
+npm install
+create_env_if_missing
+# kill_process_on_port
 npm run migrate:dev
 npm run dev &  # Run in background
 cd ../..
