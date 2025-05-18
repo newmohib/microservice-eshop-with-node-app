@@ -1,3 +1,6 @@
+## Run this app
+- chmod +x start.sh && ./start.sh
+
 # E-commerce Microservice app
 
 ### Typescript applicaiotn initialize package
