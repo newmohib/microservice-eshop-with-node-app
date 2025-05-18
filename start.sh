@@ -63,5 +63,15 @@ npm run migrate:dev
 npm run dev &  # Run in background
 cd ../..
 
+# Step 4: Setup and run user service
+echo "Setting up auth service..."
+cd services/auth
+npm install
+create_env_if_missing
+kill_process_on_port
+npm run migrate:dev
+npm run dev &  # Run in background
+cd ../..
+
 echo "All services are starting..."
 
