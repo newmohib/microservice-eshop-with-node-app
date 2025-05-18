@@ -1,87 +1,63 @@
 #!/bin/bash
 
-set -e  # Exit on error
+set -e  # Exit if any command fails
 
-# Function to check and create .env from .env.example
+# Function: Create .env from .env.example if missing
 create_env_if_missing() {
   if [ ! -f ".env" ] && [ -f ".env.example" ]; then
-    echo "Creating .env from .env.example in $(pwd)"
+    echo "📄 Creating .env from .env.example in $(pwd)"
     cp .env.example .env
   fi
 }
 
-# Function to kill any process running on the PORT from .env
-kill_process_on_port() {
-  if [ -f ".env" ]; then
-    PORT=$(grep -E '^PORT=' .env | cut -d '=' -f2)
-    if [ -n "$PORT" ]; then
-      PID=$(lsof -ti tcp:$PORT)
-      if [ -n "$PID" ]; then
-        echo "Killing process on port $PORT (PID: $PID)"
-        kill -9 $PID
-      fi
-    fi
-  fi
+# Function: Safe npm install
+safe_npm_install() {
+  echo "📦 Installing dependencies in $(pwd)..."
+  npm install || {
+    echo "❌ npm install failed in $(pwd)"
+    exit 1
+  }
+  echo "✅ npm install succeeded in $(pwd)"
 }
 
-# # Step 1: Setup and run api-gateway
-echo "Setting up api-gateway..."
-cd api-gateway
-npm install
-create_env_if_missing
-# kill_process_on_port
-npm run dev &  # Run in background
-cd ..
+# Function: Run service setup
+setup_service() {
+  SERVICE_PATH=$1
+  echo "🔧 Setting up service: $SERVICE_PATH"
+  
+  if [ ! -d "$SERVICE_PATH" ]; then
+    echo "❌ Directory $SERVICE_PATH not found! Skipping..."
+    return
+  fi
 
-# Step 2: Setup and run inventory service
-echo "Setting up inventory service..."
-cd services/inventory
-npm install
-create_env_if_missing
-# kill_process_on_port
-npm run migrate:dev
-npm run dev &  # Run in background
-cd ../..
+  cd "$SERVICE_PATH"
+  safe_npm_install
+  create_env_if_missing
 
-# Step 3: Setup and run product service
-echo "Setting up product service..."
-cd services/product
-npm install
-create_env_if_missing
-# kill_process_on_port
-npm run migrate:dev
-npm run dev &  # Run in background
-cd ../..
+  if npm run | grep -q "migrate:dev"; then
+    echo "🚀 Running migration for $SERVICE_PATH"
+    npm run migrate:dev
+  fi
 
-# Step 4: Setup and run user service
-echo "Setting up user service..."
-cd services/user
-npm install
-create_env_if_missing
-# kill_process_on_port
-npm run migrate:dev
-npm run dev &  # Run in background
-cd ../..
+  echo "🚀 Starting dev server for $SERVICE_PATH"
+  npm run dev &
 
-# Step 4: Setup and run auth service
-echo "Setting up auth service..."
-cd services/auth
-npm install
-create_env_if_missing
-# kill_process_on_port
-npm run migrate:dev
-npm run dev &  # Run in background
-cd ../..
+  cd - > /dev/null
+}
 
-# Step 4: Setup and run email service
-echo "Setting up email service..."
-cd services/email
-npm install
-create_env_if_missing
-# kill_process_on_port
-npm run migrate:dev
-npm run dev &  # Run in background
-cd ../..
+# List of services
+SERVICES=(
+  "api-gateway"
+  "services/inventory"
+  "services/product"
+  "services/user"
+  "services/auth"
+  "services/email"
+)
 
-echo "All services are starting..."
+# Run all
+for SERVICE in "${SERVICES[@]}"; do
+  setup_service "$SERVICE"
+done
 
+echo "✅ All services launched."

@@ -5,23 +5,23 @@
 version: "3.8"
 
 services:
-  postgres:
-    image: postgres:13
-    container_name: postgres
-    restart: on-failure
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "auth"]
-      interval: 30s
-      timeout: 30s
-      retries: 3
+  # postgres:
+  #   image: postgres:13
+  #   container_name: postgres
+  #   restart: on-failure
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: postgres
+  #   ports:
+  #     - "5433:5432"
+  #   volumes:
+  #     - postgres:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready", "-U", "auth"]
+  #     interval: 30s
+  #     timeout: 30s
+  #     retries: 3
 
   # pgadmin:
   #   image: dpage/pgadmin4
@@ -34,14 +34,14 @@ services:
   #     - "5050:80"
   #     - "5051:443"
 
-  # mailhog:
-  #   image: mailhog/mailhog
-  #   container_name: mailhog2
-  #   ports:
-  #     - "1025:1025"
-  #     - "8025:8025"
-  #   volumes:
-  #     - mailhog:/var/lib/mailhog
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog2
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    volumes:
+      - mailhog:/var/lib/mailhog
 
   # redis-stack:
   #   image: redis/redis-stack:latest
@@ -53,13 +53,13 @@ services:
   #   environment:
   #     - REDIS_ARGS=--save 900 1
 
-  # rabbitmq:
-  #   image: rabbitmq:3.8-management
-  #   ports:
-  #     - "5672:5672" # RabbitMQ main port
-  #     - "15672:15672" # RabbitMQ management UI port
-  #   volumes:
-  #     - rabbitmq_data:/var/lib/rabbitmq
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    ports:
+      - "5672:5672" # RabbitMQ main port
+      - "15672:15672" # RabbitMQ management UI port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
   # ------------------------------------------
 

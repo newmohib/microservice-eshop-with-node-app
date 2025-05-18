@@ -1,5 +1,6 @@
 ## Run this app
 - chmod +x start.sh && ./start.sh
+- chmod +x stop.sh && ./stop.sh
 
 # E-commerce Microservice app
 
